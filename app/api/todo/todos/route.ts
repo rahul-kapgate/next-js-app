@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Todo from "@/model/todo";
+import Todo from "@/model/Todo";
 
 export async function POST(req: NextRequest){
 
@@ -35,4 +35,16 @@ export async function POST(req: NextRequest){
             { status: 500 }
         );
     }
+}
+
+
+export async function GET() {
+  try {
+    await connectDB();
+    const todos = await Todo.find().sort({ createdAt: -1 });
+    return NextResponse.json({ success: true, data: todos });
+  } catch (error) {
+    console.error("[GET /api/todos]", error);
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+  }
 }
